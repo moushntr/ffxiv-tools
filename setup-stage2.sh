@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Installs ACT and sets up network logging.
+#
 
 . helpers/error.sh
 . helpers/prompt.sh
@@ -46,6 +49,10 @@ echo
 
 PROMPT_CONTINUE
 
+#
+# Remove wine mono if installed
+#
+
 echo 'Getting a list of installed packages in wine prefix'
 
 # Need to remove carriage returns from this output
@@ -61,6 +68,10 @@ if [[ "$WINE_MONO_GUID" != "" ]]; then
     PROMPT_CONTINUE
     wine64 uninstaller --remove "$WINE_MONO_GUID"
 fi
+
+#
+# setup .net framework
+#
 
 echo 'Checking for .NET Framework'
 
@@ -110,6 +121,10 @@ else
     WINEDEBUG=-all winetricks $WINETRICKS_DOTNET_PACKAGES
 fi
 
+#
+# install act
+#
+
 echo 'Checking for ACT install'
 ACT_LOCATION="$WINEPREFIX/drive_c/ACT"
 
@@ -135,6 +150,10 @@ else
     echo "Saving this path to $WINEPREFIX/.ACT_Location for future use"
     echo "$ACT_LOCATION" > "$WINEPREFIX/.ACT_Location"
 fi
+
+#
+# patch wine binaries
+#
 
 echo "Making sure wine isn't running anything"
 wine64 wineboot -s &>/dev/null
@@ -180,6 +199,10 @@ if [[ "$(patchelf --print-rpath "$(which wine)" | grep '$ORIGIN')" != "" ]]; the
         find "${PROTON_DIST_PATH}/lib" -type f | xargs -I{} patchelf --set-rpath "$RPATH" {} &> /dev/null
     fi
 fi
+
+#
+# set capabilities on wine binaries
+#
 
 echo 'Checking to see if wine binaries need their capabilities set'
 

@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Identifies the environment required to run FFXIV.
+#
 
 . helpers/error.sh
 . helpers/prompt.sh
@@ -7,6 +10,10 @@ echo "Setting up the FFXIV Environment scripts."
 echo
 echo "This script will require you to open the FFXIV launcher from Lutris or Steam as if you were going to play the game normally"
 echo
+
+#
+# Detect PID of the running launcher application
+#
 
 FFXIV_PID="$(ps axo pid,cmd | grep -Pi 'ffxivlauncher(|64).exe' | grep -vi grep | sed -e 's/^[[:space:]]*//' | cut -d' ' -f1)"
 
@@ -19,6 +26,11 @@ if [[ "$FFXIV_PID" == "" ]]; then
 fi
 
 success "FFXIV Launcher PID found! ($FFXIV_PID)"
+
+#
+# Extract environment used by the launcher
+#
+
 echo "Building environment information based on FFXIV Launcher env..."
 
 FFXIV_ENVIRON="$(cat /proc/$FFXIV_PID/environ | xargs -0 bash -c 'printf "export %q\n" "$@"')"
@@ -91,11 +103,19 @@ echo
 
 PROMPT_CONTINUE
 
+#
+# Setup install directory
+#
+
 echo "Creating destination directory at $HOME/bin if it doesn't exist"
 
 mkdir -p "$HOME/bin"
 
 echo "Creating source-able environment script at $HOME/bin/ffxiv-env-setup.sh"
+
+#
+# Install environment scripts
+#
 
 cat << EOF > $HOME/bin/ffxiv-env-setup.sh
 #!/bin/bash

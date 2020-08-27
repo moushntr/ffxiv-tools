@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Installs convenience scripts for running FFXIV.
+#
 
 . helpers/error.sh
 . helpers/prompt.sh
