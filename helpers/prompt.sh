@@ -28,15 +28,28 @@ PROMPT_IN_ARRAY() {
 
 PROMPT_CONTINUE()
 {
-    CONTINUE=""
+    CONTINUE="UNDECIDED"
 
-    while [[ "$CONTINUE" != "Y" && "$CONTINUE" != "N" && "$CONTINUE" != "y" && "$CONTINUE" != "n" ]]; do
-        read -p "Continue? [Y/N] " CONTINUE
+    # Default answer is Y and can be selected by pressing enter.
+    while [[ "$CONTINUE" != "Y" && "$CONTINUE" != "N" && "$CONTINUE" != "y" && "$CONTINUE" != "n" && "$CONTINUE" != "" ]]; do
+        read -p "Continue? [Y/n] " CONTINUE
+        echo
     done
 
     if [[ "$CONTINUE" == "N" || "$CONTINUE" == "n" ]]; then
         echo "Aborting process"
         exit 1
+    fi
+}
+
+PROMPT_CONFIRM()
+{
+    CONFIRMED="N"
+    read -p "Continue? [Y/n] " CONFIRMED
+    if [[ "$CONFIRMED" == "Y" || "$CONFIRMED" == "y" || "$CONFIRMED" == "" ]]; then
+        return 0
+    else
+        return 255
     fi
 }
 
